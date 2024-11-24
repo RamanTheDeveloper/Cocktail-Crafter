@@ -1,5 +1,5 @@
 '''
-Program: Cockatil Maker
+Program: Cockatil Crafter
 Author: Ramandeep Singh
 Date: 24/22/2024
 Summary: This program will allow the user to select a cocktail from a list of cocktails and display the recipe for the selected cocktail.
