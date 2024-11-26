@@ -9,9 +9,11 @@ Summary: This program will allow the user to select a cocktail from a list of co
 
 import csv
 
+file_name = '/Users/ramandeep.singh/Abertay Uni/Python Projects/Cocktail-Crafter/final_cocktails.csv'
+
 try:
     # Load the data from the CSV file
-    with open('final_cocktails.csv', 'r') as file:
+    with open(file_name, 'r') as file:
         cocktail_data = csv.reader(file)
 
         try:
@@ -28,10 +30,11 @@ try:
                 cocktail_count += 1
 
     # Display the total number of cocktails
-    print(f'Total number of cocktails: {cocktail_count}')
+    print("The file has been loaded successfully.\n")
+    print(f'Total number of cocktails found: {cocktail_count}')
 
 except FileNotFoundError:
-    print("Error: The file 'final_cocktails.csv' was not found. Please check the file path and try again.")
+    print(f"Error: The file {file_name} was not found. Please check the file path and try again.")
 
 except csv.Error as e:
     print(f"Error reading the CSV file: {e}")
