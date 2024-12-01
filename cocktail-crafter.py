@@ -10,17 +10,11 @@ Summary: This program will allow the user to select a cocktail from a list of co
 import csv
 import os
 import pandas as pd
+from requests import get
+from tabulate import tabulate
 
 cwd = os.getcwd()
 file_name = 'final_cocktails.csv'
-
-def main():
-    welcome_message()
-
-    #file = get_file(file_name, cwd)
-    #df = pd.DataFrame(file)
-    #df.style()
-
 
 def get_file(file_name, file_path):
     '''
@@ -84,7 +78,7 @@ def count_cocktails(file):
             cocktail_count += 1
     return cocktail_count
 
-def main_menu():
+def print_main_menu():
     '''
     This function will display the main menu
     '''
@@ -94,3 +88,56 @@ def main_menu():
     print("  3. Random cocktail")
     print("  4. Information")
     print("  5. Exit")
+
+def list_all_cocktails():
+    '''
+    This function will display all the cocktails in the list.
+    '''
+    print("\nAll Cocktails:")
+    print("  ID  | Cocktail Name")
+    print("------|----------------")
+    file = get_file(file_name, cwd)
+    if file:
+        df = pd.DataFrame(file)
+        print(tabulate(df, tablefmt='psql', colalign="left"))
+
+def get_user_choice_for_main_menu():
+    '''
+    This function prompts the user to choose an option from the menu.
+    '''
+    while True:
+        print("\nPlease choose an option from the menu (1-5):")
+        user_input = int(input("Enter your choice: "))
+        
+        # Validate if input is between 1 and 5
+        if not (1 <= user_input <= 5):
+            raise ValueError("Choice must be between 1 and 5.")
+        
+        match user_input:
+            case 1:
+                list_all_cocktails()
+            case 2:
+                print("Search functionality coming soon!")
+            case 3:
+                print("Random cocktail feature coming soon!")
+            case 4:
+                print("Information section coming soon!")
+            case 5:
+                print("Exiting program!")
+                exit()
+            case _:
+                print(f"Invalid choice {user_input}. Please try again.")
+                continue
+    
+def main():
+    get_file(file_name, cwd)
+    
+    welcome_message()
+    print_main_menu()
+    
+    user_input = get_user_choice_for_main_menu()
+    
+
+
+if __name__ == "__main__":
+    main()
