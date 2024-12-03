@@ -15,6 +15,12 @@ from tabulate import tabulate
 cwd = os.getcwd()
 file_name = 'final_cocktails.csv'
 
+def clear():
+    '''
+    This function will clear the terminal screen.
+    '''
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 def get_file(file_name, file_path):
     '''
     This function will load the data from the CSV file and return the data as a list of dictionaries.
@@ -128,6 +134,7 @@ def main_menu():
                 
                 # Display the recipe for the selected cocktail
                 display_cocktail_details(user_input)
+                break
 
             case 2:
                 print("Search functionality coming soon!")
@@ -144,24 +151,29 @@ def main_menu():
             
             case _:
                 print(f"Invalid choice {user_input}. Please try again.")
+        
+        clear()
+        print_main_menu()
 
 def display_cocktail_details(user_input):
     '''
     This function will display the recipe for the selected cocktail.
     '''
     file = get_file(file_name, cwd)
-    headers = ['name', 'category', 'recipe']
-    df = pd.DataFrame(file)
-    
-    if all(col in df.columns for col in headers):  # Ensure required columns exist
-        filtered_df = df[headers]
-        print(tabulate(filtered_df, headers='keys', tablefmt='psql', colalign=("left", "left")))
-    else:
-        print(f"Error: One or more columns {headers} are missing in the dataset.")
 
-    # Get the recipe for the selected cocktail
-    selected_cocktail = df.loc[df['name'] == user_input]
-    print(selected_cocktail)
+    # Display the cocktail name for the selected user input
+    for cocktail in file:
+        if user_input == cocktail['id']:
+            print("\nCocktail Recipe:")
+            print("---------------------")
+            print(f"Name: {cocktail['name']}")
+            print(f"\nCategory: {cocktail['category']}")
+            print("\nIngredients:")
+            print("  - " + cocktail['ingredients'])
+            print("\nIngredients Measurements:")
+            print("  - " + cocktail['ingredientMeasures'])
+            print("\nInstructions:")
+            print("  - " + cocktail['instructions'])
 
 
 def valid_input_main_menu(user_input):
