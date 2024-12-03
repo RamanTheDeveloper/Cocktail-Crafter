@@ -59,7 +59,6 @@ def welcome_message():
     print("  1. Browse the menu below.")
     print("  2. Type the number corresponding to your choice and press Enter.\n")
 
-
 def count_cocktails(file):
     with open(file_name, 'r') as file:
         cocktail_data = csv.reader(file)
@@ -94,12 +93,16 @@ def list_all_cocktails():
     This function will display all the cocktails in the list.
     '''
     print("\nAll Cocktails:")
-    print("  ID  | Cocktail Name")
     print("------|----------------")
+    headers = ['name', 'category']
     file = get_file(file_name, cwd)
-    if file:
-        df = pd.DataFrame(file)
-        print(tabulate(df, tablefmt='psql', colalign="left"))
+
+    df = pd.DataFrame(file)
+    if all(col in df.columns for col in headers):  # Ensure required columns exist
+        filtered_df = df[headers]
+        print(tabulate(filtered_df, headers='keys', tablefmt='psql', colalign=("left", "left")))
+    else:
+        print(f"Error: One or more columns {headers} are missing in the dataset.")
 
 def get_user_choice_for_main_menu():
     '''
