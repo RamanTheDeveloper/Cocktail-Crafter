@@ -143,7 +143,8 @@ def main_menu():
                 print("Random cocktail feature coming soon!")
             
             case 4:
-                print("Information section coming soon!")
+                display_information()
+                break
             
             case 5:
                 print("Exiting program!")
@@ -175,7 +176,6 @@ def display_cocktail_details(user_input):
             print("\nInstructions:")
             print("  - " + cocktail['instructions'])
 
-
 def valid_input_main_menu(user_input):
     '''
     This function will validate the user input and ensure that the input is a valid choice for the given context.
@@ -184,7 +184,38 @@ def valid_input_main_menu(user_input):
         print("Invalid input. Please enter a number between 1 and 5.")
         return False
     return True
-    
+
+def display_information():
+    '''
+    This function will display the information section.
+    '''
+    file = get_file(file_name, cwd)
+    df = pd.DataFrame(file)
+
+    print("\nInformation:")
+
+    total_cocktails = count_cocktails(file_name)
+    print(f"\nTotal number of cocktails in the list: {total_cocktails}")
+
+    if 'ingredients' in df.columns:
+        df['num_ingredients'] = df['ingredients'].apply(lambda x: len(x.split(',')) if pd.notna(x) else 0)
+        avg_ingredients = df['num_ingredients'].mean()
+        print(f"The average number of ingredients per cocktail is: {avg_ingredients:.2f}")
+
+    print("  3. Most commonly used ingredient across all cocktails")
+    print("  4. Return to main menu")
+
+    # Input validation loop
+    while True:
+        try:
+            user_input = int(input("Enter your choice: "))
+            if not valid_input_information(user_input):
+                continue
+            break
+        except ValueError:
+            print("Invalid input. Please enter a number between 1 and 4.")
+
+
 def main():
     get_file(file_name, cwd)
     
