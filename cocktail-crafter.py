@@ -10,7 +10,6 @@ Summary: This program will allow the user to select a cocktail from a list of co
 import csv
 import os
 import pandas as pd
-from requests import get
 from tabulate import tabulate
 
 cwd = os.getcwd()
@@ -40,7 +39,6 @@ def get_file(file_name, file_path):
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-
 
 def welcome_message():
     '''
@@ -92,11 +90,12 @@ def list_all_cocktails():
     '''
     This function will display all the cocktails in the list.
     '''
-    print("\nAll Cocktails:")
-    print("------|----------------")
-    headers = ['name', 'category']
     file = get_file(file_name, cwd)
 
+    print("\nAll Cocktails:")
+    print("---------------------")
+    
+    headers = ['name', 'category']
     df = pd.DataFrame(file)
     if all(col in df.columns for col in headers):  # Ensure required columns exist
         filtered_df = df[headers]
@@ -104,33 +103,75 @@ def list_all_cocktails():
     else:
         print(f"Error: One or more columns {headers} are missing in the dataset.")
 
-def get_user_choice_for_main_menu():
+def main_menu():
     '''
     This function prompts the user to choose an option from the menu.
     '''
     while True:
         print("\nPlease choose an option from the menu (1-5):")
-        user_input = int(input("Enter your choice: "))
         
-        # Validate if input is between 1 and 5
-        if not (1 <= user_input <= 5):
-            raise ValueError("Choice must be between 1 and 5.")
+        # Input validation loop
+        while True:
+            try:
+                user_input = int(input("Enter your choice: "))
+                if not valid_input_main_menu(user_input):
+                    continue  
+                break  
+            except ValueError:
+                print("Invalid input. Please enter a number between 1 and 5.")
         
+        # Main menu logic
         match user_input:
             case 1:
                 list_all_cocktails()
+                user_input = input("\nWhich cocktail would you like to view? (enter number): ")
+                
+                # Display the recipe for the selected cocktail
+                display_cocktail_details(user_input)
+
             case 2:
                 print("Search functionality coming soon!")
+            
             case 3:
                 print("Random cocktail feature coming soon!")
+            
             case 4:
                 print("Information section coming soon!")
+            
             case 5:
                 print("Exiting program!")
                 exit()
+            
             case _:
                 print(f"Invalid choice {user_input}. Please try again.")
-                continue
+
+def display_cocktail_details(user_input):
+    '''
+    This function will display the recipe for the selected cocktail.
+    '''
+    file = get_file(file_name, cwd)
+    headers = ['name', 'category', 'recipe']
+    df = pd.DataFrame(file)
+    
+    if all(col in df.columns for col in headers):  # Ensure required columns exist
+        filtered_df = df[headers]
+        print(tabulate(filtered_df, headers='keys', tablefmt='psql', colalign=("left", "left")))
+    else:
+        print(f"Error: One or more columns {headers} are missing in the dataset.")
+
+    # Get the recipe for the selected cocktail
+    selected_cocktail = df.loc[df['name'] == user_input]
+    print(selected_cocktail)
+
+
+def valid_input_main_menu(user_input):
+    '''
+    This function will validate the user input and ensure that the input is a valid choice for the given context.
+    '''
+    if user_input < 1 or user_input > 5:
+        print("Invalid input. Please enter a number between 1 and 5.")
+        return False
+    return True
     
 def main():
     get_file(file_name, cwd)
@@ -138,8 +179,7 @@ def main():
     welcome_message()
     print_main_menu()
     
-    user_input = get_user_choice_for_main_menu()
-    
+    main_menu()
 
 
 if __name__ == "__main__":
