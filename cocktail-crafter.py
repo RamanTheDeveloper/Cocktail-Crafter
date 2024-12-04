@@ -118,24 +118,30 @@ def main_menu():
     This function prompts the user to choose an option from the menu.
     '''
     while True:
-        print("\nPlease choose an option from the menu (1-5):")
+        print("\nPlease choose an option from the menu (1-5), or press 'a' for About:")
         
-        # Input validation loop
-        while True:
-            try:
-                user_input = int(input("Enter your choice: "))
-                if not valid_input_main_menu(user_input):
-                    continue  
-                break  
-            except ValueError:
-                print("Invalid input. Please enter a number between 1 and 5.")
+        # Input validation loop for numeric choices
+        user_input = input("Enter your choice: ").strip()
         
+        # If the user presses 'a', show the About section
+        if user_input == 'a':
+            display_about()
+            continue
+        
+        # Try to convert the user input to an integer and validate
+        try:
+            user_input = int(user_input)
+            if not valid_input_main_menu(user_input):
+                continue 
+        except ValueError:
+            print("Invalid input. Please enter a number between 1 and 5 or press 'a' for About.")
+            continue
+
         # Main menu logic
         match user_input:
             case 1:
                 list_all_cocktails()
                 user_input = input("\nWhich cocktail would you like to view? (enter number): ")
-                
                 # Display the recipe for the selected cocktail
                 display_cocktail_details(user_input)
                 break
@@ -158,9 +164,8 @@ def main_menu():
             
             case _:
                 print(f"Invalid choice {user_input}. Please try again.")
-        
-        clear()
-        print_main_menu()
+                continue
+
 
 def display_cocktail_details(user_input):
     '''
@@ -335,6 +340,19 @@ def search_cocktail():
                 print(f"The cocktail '{user_input}' was not found. Please try again or type '1' to return to the main menu.")
         except Exception as e:
             print(f"An error occurred: {e}. Please try again.")
+
+def display_about():
+    '''This function will display the "About" section from the about.txt file.'''
+    clear()
+
+    try:
+        with open('about.txt', 'r') as file:
+            about_text = file.read()
+        print(about_text)
+    except FileNotFoundError:
+        print("Error, the 'about.txt' file was not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 def main():
