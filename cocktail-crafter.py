@@ -7,6 +7,7 @@ Summary: This program will allow the user to select a cocktail from a list of co
 
 '''
 
+import ast
 import csv
 import os
 import random
@@ -138,7 +139,8 @@ def main_menu():
                 break
 
             case 2:
-                print("Search functionality coming soon!")
+                search_cocktail()
+                break
             
             case 3:
                 choose_random_cocktail()
@@ -164,19 +166,35 @@ def display_cocktail_details(user_input):
     '''
     file = get_file(file_name, cwd)
 
-    # Display the cocktail name for the selected user input
     for cocktail in file:
         if user_input == cocktail['id']:
             print("\nCocktail Recipe:")
             print("---------------------")
             print(f"Name: {cocktail['name']}")
             print(f"\nCategory: {cocktail['category']}")
-            print("\nIngredients:")
-            print("  - " + cocktail['ingredients'])
-            print("\nIngredients Measurements:")
-            print("  - " + cocktail['ingredientMeasures'])
+
+            try:
+                ingredients_list = ast.literal_eval(cocktail['ingredients'])
+                measurements_list = ast.literal_eval(cocktail['ingredientMeasures'])
+            except (ValueError, SyntaxError):
+                ingredients_list = []
+                measurements_list = []
+                print("Error in parsing ingredients or measurements.")
+
+            if ingredients_list and measurements_list:
+                combined_ingredients = [
+                    f"{measure.strip()} {ingredient.strip()}" for ingredient, measure in zip(ingredients_list, measurements_list)
+                ]
+                ingredients_str = ', '.join(combined_ingredients)
+            else:
+                ingredients_str = 'No ingredients or measurements found'
+
+            print("\nIngredients with Measurements:")
+            print("  - " + ingredients_str)
+
             print("\nInstructions:")
             print("  - " + cocktail['instructions'])
+            print("\n\n\n")
 
 def choose_random_cocktail():
     """
@@ -274,6 +292,46 @@ def display_information():
 
     print("\nPress any key to return to the main menu...")
     input()
+
+def search_cocktail():
+    """
+    Allow the user to search for a specific cocktail by name.
+    If the cocktail is found, display its details.
+    If not, prompt the user to try again or return to the main menu.
+    """
+    while True:
+        try:
+            # Prompt the user to enter the name of the cocktail
+            user_input = input("Enter the name of the cocktail you want to search for: ").strip()
+
+            # Check if the user wants to return to the main menu
+            if user_input == '1':
+                print("Returning to the main menu...")
+                return  # Exit the search function and return to the main menu
+
+            # Load the file and search for the cocktail
+            file = get_file(file_name, cwd)  # Load the dataset
+
+            if not file or len(file) == 0:
+                print("The cocktail list is empty or the file could not be loaded.")
+                return  # Exit the search function
+
+            # Search for the cocktail by name (case-insensitive)
+            found_cocktail = None
+            for cocktail in file:
+                if user_input.lower() == cocktail['name'].lower():  # Case-insensitive match
+                    found_cocktail = cocktail
+                    break
+
+            if found_cocktail:
+                # Display the details of the found cocktail
+                display_cocktail_details(found_cocktail['id'])
+                return  # Exit after displaying the details
+            else:
+                # If cocktail is not found, ask user to try again
+                print(f"The cocktail '{user_input}' was not found. Please try again or type '1' to return to the main menu.")
+        except Exception as e:
+            print(f"An error occurred: {e}. Please try again.")
 
 
 def main():
