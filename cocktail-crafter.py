@@ -9,6 +9,7 @@ Summary: This program will allow the user to select a cocktail from a list of co
 
 import csv
 import os
+from typing import Counter
 import pandas as pd
 from tabulate import tabulate
 
@@ -64,22 +65,21 @@ def welcome_message():
     print("  2. Type the number corresponding to your choice and press Enter.\n")
 
 def count_cocktails(file):
-    with open(file_name, 'r') as file:
-        cocktail_data = csv.reader(file)
-
     try:
-        # Skip the header row
-        header = next(cocktail_data)
-    except StopIteration:
+        with open(file_name, 'r') as file:
+            cocktail_data = csv.reader(file)
+            # Skip the header row
+            try:
+                header = next(cocktail_data)
+            except StopIteration:
+                print('The file is empty')
+                exit()
+            #Count the number of disinct cocktails
+            cocktail_count = sum(1 for row in cocktail_data if row)  # Count non-empty rows
+        return cocktail_count
+    except FileNotFoundError:
         print('The file is empty')
         exit()
-
-    #Count the number of disinct cocktails
-    cocktail_count = 0
-    for row in cocktail_data:
-        if row:
-            cocktail_count += 1
-    return cocktail_count
 
 def print_main_menu():
     '''
@@ -185,35 +185,75 @@ def valid_input_main_menu(user_input):
         return False
     return True
 
+def valid_input(user_input, min_value: int, max_value: int):
+    '''
+    This function will validate the user input and ensure that the input is a valid choice for the given context.
+    '''
+    if user_input < min_value or user_input > max_value:
+        print(f"Invalid input. Please enter a number between {min_value} and {max_value}.")
+        return False
+    return True
+
+def get_most_used_ingredient(file_name):
+    """
+    Calculate the most commonly used ingredient across all cocktails.
+    """
+    try:
+        # Load the CSV file into a DataFrame
+        df = pd.read_csv(file_name)
+
+        # Check if the 'ingredients' column exists
+        if 'ingredients' not in df.columns:
+            print("The 'ingredients' column is missing in the dataset.")
+            return None
+
+        # Combine all ingredients into a single list
+        all_ingredients = []
+        for ingredients in df['ingredients'].dropna():  # Ignore NaN values
+            all_ingredients.extend(ingredient.strip() for ingredient in ingredients.split(','))
+
+        # Count the occurrences of each ingredient
+        ingredient_counts = Counter(all_ingredients)
+
+        # Find the most common ingredient
+        most_common_ingredient, count = ingredient_counts.most_common(1)[0]
+        return most_common_ingredient, count
+    except FileNotFoundError:
+        print(f"File '{file_name}' not found.")
+        return None
+    except pd.errors.EmptyDataError:
+        print("The CSV file is empty.")
+        return None
+
 def display_information():
     '''
     This function will display the information section.
     '''
-    file = get_file(file_name, cwd)
-    df = pd.DataFrame(file)
 
     print("\nInformation:")
 
     total_cocktails = count_cocktails(file_name)
     print(f"\nTotal number of cocktails in the list: {total_cocktails}")
 
-    if 'ingredients' in df.columns:
-        df['num_ingredients'] = df['ingredients'].apply(lambda x: len(x.split(',')) if pd.notna(x) else 0)
-        avg_ingredients = df['num_ingredients'].mean()
-        print(f"The average number of ingredients per cocktail is: {avg_ingredients:.2f}")
+    try:
+        df = pd.read_csv(file_name)
 
-    print("  3. Most commonly used ingredient across all cocktails")
-    print("  4. Return to main menu")
+        # Average number of ingredients per cocktail
+        if 'ingredients' in df.columns:
+            df['num_ingredients'] = df['ingredients'].apply(lambda x: len(x.split(',')) if pd.notna(x) else 0)
+            avg_ingredients = df['num_ingredients'].mean()
+            print(f"The average number of ingredients per cocktail is: {avg_ingredients:.2f}")
 
-    # Input validation loop
-    while True:
-        try:
-            user_input = int(input("Enter your choice: "))
-            if not valid_input_information(user_input):
-                continue
-            break
-        except ValueError:
-            print("Invalid input. Please enter a number between 1 and 4.")
+        # Most commonly used ingredient     
+        most_common_ingredient, count = get_most_used_ingredient(file_name)
+        print(f"The most commonly used ingredient is: {most_common_ingredient} (used {count} times).")
+    except FileNotFoundError:
+        print(f"File '{file_name}' not found.")
+    except pd.errors.EmptyDataError:
+        print("The CSV file is empty.")
+
+    print("\nPress any key to return to the main menu...")
+    input()
 
 
 def main():
