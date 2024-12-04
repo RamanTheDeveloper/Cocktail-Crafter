@@ -168,7 +168,6 @@ def main_menu():
                 print(f"Invalid choice {user_input}. Please try again.")
                 continue
 
-
 def display_cocktail_details(user_input):
     '''
     This function will display the recipe for the selected cocktail.
@@ -252,25 +251,39 @@ def get_most_used_ingredient(file_name):
         # Check if the 'ingredients' column exists
         if 'ingredients' not in df.columns:
             print("The 'ingredients' column is missing in the dataset.")
-            return None
+            return None, 0  # Return 0 count if no ingredients column is found
 
         # Combine all ingredients into a single list
         all_ingredients = []
         for ingredients in df['ingredients'].dropna():  # Ignore NaN values
-            all_ingredients.extend(ingredient.strip() for ingredient in ingredients.split(','))
+            try:
+                # Safely evaluate the string to a list using ast.literal_eval
+                ingredients_list = ast.literal_eval(ingredients.strip())  # Converts string to list
+                all_ingredients.extend(ingredient.strip() for ingredient in ingredients_list)
+            except (ValueError, SyntaxError):
+                print(f"Skipping invalid ingredients format: {ingredients}")
+                continue
 
         # Count the occurrences of each ingredient
         ingredient_counts = Counter(all_ingredients)
 
         # Find the most common ingredient
-        most_common_ingredient, count = ingredient_counts.most_common(1)[0]
-        return most_common_ingredient, count
+        most_common_ingredient = ingredient_counts.most_common(1)  # List of tuples, i.e., [('Gin', 59)]
+
+        if most_common_ingredient:
+            # Access the first tuple and unpack it directly
+            ingredient, count = most_common_ingredient[0]  # Unpack directly here
+            return ingredient, count
+        else:
+            print("No ingredients found.")
+            return None, 0  # Return None and 0 if no ingredients found
+
     except FileNotFoundError:
         print(f"File '{file_name}' not found.")
-        return None
+        return None, 0
     except pd.errors.EmptyDataError:
         print("The CSV file is empty.")
-        return None
+        return None, 0
 
 def display_information():
     '''
@@ -281,7 +294,7 @@ def display_information():
     print("-------------")
 
     total_cocktails = count_cocktails(file_name)
-    print(f"\nTotal number of cocktails in the list: {total_cocktails}")
+    print(f"\nTotal number of cocktails in the list: {total_cocktails} cocktails\n")
 
     try:
         df = pd.read_csv(file_name)
@@ -290,11 +303,14 @@ def display_information():
         if 'ingredients' in df.columns:
             df['num_ingredients'] = df['ingredients'].apply(lambda x: len(x.split(',')) if pd.notna(x) else 0)
             avg_ingredients = df['num_ingredients'].mean()
-            print(f"The average number of ingredients per cocktail is: {avg_ingredients:.2f}")
+            print(f"The average number of ingredients per cocktail is: {avg_ingredients:.2f} ingredients\n")
 
         # Most commonly used ingredient     
         most_common_ingredient, count = get_most_used_ingredient(file_name)
-        print(f"The most commonly used ingredient is: {most_common_ingredient} (used {count} times).")
+        if most_common_ingredient:
+            print(f"The most commonly used ingredient is: {most_common_ingredient} (used {count} times).\n")
+        else:
+            print("Could not find the most common ingredient.")
     except FileNotFoundError:
         print(f"File '{file_name}' not found.")
     except pd.errors.EmptyDataError:
