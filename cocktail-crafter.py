@@ -125,10 +125,17 @@ def main_menu():
         
         # If the user presses 'a', show the About section
         if user_input == 'a':
+            clear()
             display_about()
-            print("\n\n\n\n\n")
-            print_main_menu()
-            continue
+            print("\nPress 'q' to return to the main menu.")
+            while True:
+                back_input = input("Enter your choice: ").strip().lower()
+                if back_input == 'q':
+                    clear()
+                    print_main_menu()
+                    break
+                else:
+                    print("Invalid input. Press 'q' to return to the main menu.")
         
         # Try to convert the user input to an integer and validate
         try:
@@ -142,21 +149,27 @@ def main_menu():
         # Main menu logic
         match user_input:
             case 1:
+                clear()
                 list_all_cocktails()
                 user_input = input("\nWhich cocktail would you like to view? (enter number): ")
-                # Display the recipe for the selected cocktail
+                if not valid_input(int(user_input), 0, 424):
+                    print("\nPlease enter a valid number.")
+                    continue
                 display_cocktail_details(user_input)
                 break
 
             case 2:
+                clear()
                 search_cocktail()
                 break
             
             case 3:
+                clear()
                 choose_random_cocktail()
                 break
             
             case 4:
+                clear()
                 display_information()
                 break
             
