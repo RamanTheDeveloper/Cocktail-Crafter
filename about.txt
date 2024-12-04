@@ -1,0 +1,21 @@
+About Cocktail Crafter
+
+Welcome to Cocktail Crafter, your ultimate cocktail companion! This program allows you to explore a wide range of cocktails and their detailed recipes. Whether you're a beginner or an experienced mixologist, Cocktail Crafter provides a user-friendly way to discover, learn, and craft your favorite drinks.
+
+Functionality Overview:
+- Browse All Cocktails: View a list of all cocktails in the database, with details such as ingredients, measurements, and instructions for preparation.
+- Search for a Cocktail: Easily search for specific cocktails by name, and if found, you can view the recipe and details.
+- Random Cocktail Suggestion: Get a surprise cocktail recommendation, perfect for trying something new.
+- Cocktail Statistics: Gain insights with statistics like the average number of ingredients per cocktail and the most commonly used ingredients.
+- User-friendly Navigation: The simple menu offers five options:
+  1. View all cocktails.
+  2. Search for a specific cocktail.
+  3. Get a random cocktail suggestion.
+  4. Access program information and statistics.
+  5. Exit the program.
+
+About the Author:
+Cocktail Crafter was developed by Ramandeep Singh, a passionate enthusiast of both programming and mixology. The goal is to provide a convenient, easy-to-use tool that helps people discover new cocktails and refine their bartending skills.
+
+Why This Tool Is Useful:
+Cocktail Crafter is an excellent resource for those who want to experiment with new drink recipes, get creative with their home bartending, or simply learn more about the world of cocktails. It allows you to quickly find recipes, explore new drink ideas, and even track cocktail trends with built-in statistics. Whether hosting a party or enjoying a quiet evening, Cocktail Crafter is a valuable tool for any cocktail lover.
