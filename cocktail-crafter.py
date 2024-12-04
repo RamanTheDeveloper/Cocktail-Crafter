@@ -9,6 +9,7 @@ Summary: This program will allow the user to select a cocktail from a list of co
 
 import csv
 import os
+import random
 from typing import Counter
 import pandas as pd
 from tabulate import tabulate
@@ -140,14 +141,15 @@ def main_menu():
                 print("Search functionality coming soon!")
             
             case 3:
-                print("Random cocktail feature coming soon!")
+                choose_random_cocktail()
+                break
             
             case 4:
                 display_information()
                 break
             
             case 5:
-                print("Exiting program!")
+                print("Exiting program! Goodbye!")
                 exit()
             
             case _:
@@ -175,6 +177,24 @@ def display_cocktail_details(user_input):
             print("  - " + cocktail['ingredientMeasures'])
             print("\nInstructions:")
             print("  - " + cocktail['instructions'])
+
+def choose_random_cocktail():
+    """
+    Select a random cocktail from the dataset and display its details.
+    """
+    print("\nThe following cocktail has been chosen for you:\n")
+
+    file = get_file(file_name, cwd)
+
+    if not file or len(file) == 0:
+        print("The cocktail list is empty or the file could not be loaded.")
+        return
+
+    # Choose a random cocktail
+    random_cocktail = random.choice(file)
+
+    # Display the details of the random cocktail
+    display_cocktail_details(random_cocktail['id'])
 
 def valid_input_main_menu(user_input):
     '''
