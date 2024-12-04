@@ -126,6 +126,8 @@ def main_menu():
         # If the user presses 'a', show the About section
         if user_input == 'a':
             display_about()
+            print("\n\n\n\n\n")
+            print_main_menu()
             continue
         
         # Try to convert the user input to an integer and validate
