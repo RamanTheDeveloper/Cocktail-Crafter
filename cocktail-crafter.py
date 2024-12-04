@@ -62,9 +62,11 @@ def welcome_message():
     """
     print(banner)
     print("  Your one-stop guide to delicious cocktail recipes!")
+    print("\n\nThe Cocktail Crafter program is an interactive tool designed to help users explore and craft cocktails from a comprehensive database. With this program, users can browse a variety of cocktails, view detailed recipes including ingredients and preparation instructions, and search for specific drinks by name. Additionally, it provides features like displaying random cocktail suggestions and generating insightful statistics, making it a perfect companion for both novice and experienced bartenders looking for drink inspiration.\n")
     print("\nInstructions:")
-    print("  1. Browse the menu below.")
-    print("  2. Type the number corresponding to your choice and press Enter.\n")
+    print("  Browse the menu below.")
+    print("  Type the number corresponding to your choice and press Enter.")
+    print("  Let's get started!\n")
 
 def count_cocktails(file):
     try:
@@ -269,6 +271,7 @@ def display_information():
     '''
 
     print("\nInformation:")
+    print("-------------")
 
     total_cocktails = count_cocktails(file_name)
     print(f"\nTotal number of cocktails in the list: {total_cocktails}")
