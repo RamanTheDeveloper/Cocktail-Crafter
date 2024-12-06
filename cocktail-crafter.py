@@ -118,6 +118,7 @@ def main_menu():
     This function prompts the user to choose an option from the menu.
     '''
     while True:
+        print_main_menu()
         print("\nPlease choose an option from the menu (1-5), or press 'a' for About:")
         
         # Input validation loop for numeric choices
@@ -127,15 +128,7 @@ def main_menu():
         if user_input == 'a':
             clear()
             display_about()
-            print("\nPress 'q' to return to the main menu.")
-            while True:
-                back_input = input("Enter your choice: ").strip().lower()
-                if back_input == 'q':
-                    clear()
-                    print_main_menu()
-                    break
-                else:
-                    print("Invalid input. Press 'q' to return to the main menu.")
+            return_to_main_menu()
         
         # Try to convert the user input to an integer and validate
         try:
@@ -156,21 +149,25 @@ def main_menu():
                     print("\nPlease enter a valid number.")
                     continue
                 display_cocktail_details(user_input)
+                return_to_main_menu()
                 break
 
             case 2:
                 clear()
                 search_cocktail()
+                return_to_main_menu()
                 break
             
             case 3:
                 clear()
                 choose_random_cocktail()
+                return_to_main_menu()
                 break
             
             case 4:
                 clear()
                 display_information()
+                return_to_main_menu()
                 break
             
             case 5:
@@ -385,12 +382,22 @@ def display_about():
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def return_to_main_menu():
+    '''
+    This function prompts the user to press 'q' to return to the main menu.
+    '''
+    while True:
+        user_input = input("\nPress 'q' to return to the main menu: ").strip().lower()
+        if user_input == 'q':
+            main_menu()
+            break
+        else:
+            print("Invalid input. Please press 'q' to go back to the main menu.")
 
 def main():
     get_file(file_name, cwd)
     
     welcome_message()
-    print_main_menu()
     
     main_menu()
 
