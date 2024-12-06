@@ -25,7 +25,8 @@ Cocktail Crafter is a Python-based application designed to provide an interactiv
 
 ## Requirements  
 
-- **Python 3.7 or higher**  
+- **Python 3.10 or higher**  
 - **Dependencies**: Install required libraries using:  
   ```bash
-  pip install -r requirements.txt
+  pip install pandas
+  pip install tabulate
