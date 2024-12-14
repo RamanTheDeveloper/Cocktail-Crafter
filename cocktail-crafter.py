@@ -144,13 +144,20 @@ def main_menu():
             case 1:
                 clear()
                 list_all_cocktails()
-                user_input = input("\nWhich cocktail would you like to view? (enter number): ")
-                if not valid_input(int(user_input), 0, 424):
-                    print("\nPlease enter a valid number.")
-                    continue
-                display_cocktail_details(user_input)
-                return_to_main_menu()
-                break
+                
+                try:
+                    user_input = input("\nWhich cocktail would you like to view? (enter number): ")
+                    user_input_int = int(user_input)
+
+                    # Validate the integer input
+                    if not valid_input(user_input_int, 0, 424):
+                        print("\nPlease enter a valid number.")
+                        continue
+
+                    display_cocktail_details(user_input_int)
+
+                except ValueError:
+                    print("\nInvalid input. Please enter a number.")
 
             case 2:
                 clear()
