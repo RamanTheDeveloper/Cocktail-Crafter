@@ -192,8 +192,8 @@ def display_cocktail_details(user_input):
             print(f"\nCategory: {cocktail['category']}")
 
             try:
-                ingredients_list = ast.literal_eval(cocktail['ingredients'])
-                measurements_list = ast.literal_eval(cocktail['ingredientMeasures'])
+                ingredients_list = ast.literal_eval(cocktail['ingredients']) if cocktail.get('ingredients') else []
+                measurements_list = ast.literal_eval(cocktail['ingredientMeasures']) if cocktail.get('ingredientMeasures') else []
             except (ValueError, SyntaxError):
                 ingredients_list = []
                 measurements_list = []
@@ -201,8 +201,10 @@ def display_cocktail_details(user_input):
 
             if ingredients_list and measurements_list:
                 combined_ingredients = [
-                    f"{measure.strip()} {ingredient.strip()}" for ingredient, measure in zip(ingredients_list, measurements_list)
+                    f"{(measure or '').strip()} {(ingredient or '').strip()}" 
+                    for ingredient, measure in zip(ingredients_list, measurements_list)
                 ]
+
                 ingredients_str = ', '.join(combined_ingredients)
             else:
                 ingredients_str = 'No ingredients or measurements found'
@@ -337,35 +339,40 @@ def search_cocktail():
     """
     while True:
         try:
-            # Prompt the user to enter the name of the cocktail
-            user_input = input("Enter the name of the cocktail you want to search for: ").strip()
-
+            user_input = input("Enter the name of the cocktail you want to search for: ")
+            
+            # Check if the user_input is None or empty
+            if not user_input:
+                print("No input provided. Please try again.")
+                continue  # Ask for input again
+            
             # Check if the user wants to return to the main menu
             if user_input == '1':
                 print("Returning to the main menu...")
-                return  # Exit the search function and return to the main menu
+                return
 
             # Load the file and search for the cocktail
-            file = get_file(file_name, cwd)  # Load the dataset
+            file = get_file(file_name, cwd)
 
             if not file or len(file) == 0:
                 print("The cocktail list is empty or the file could not be loaded.")
-                return  # Exit the search function
+                return  
 
             # Search for the cocktail by name (case-insensitive)
             found_cocktail = None
             for cocktail in file:
-                if user_input.lower() == cocktail['name'].lower():  # Case-insensitive match
+                if user_input.lower() == cocktail['name'].lower():
                     found_cocktail = cocktail
                     break
 
             if found_cocktail:
-                # Display the details of the found cocktail
                 display_cocktail_details(found_cocktail['id'])
-                return  # Exit after displaying the details
+                return  
             else:
                 # If cocktail is not found, ask user to try again
                 print(f"The cocktail '{user_input}' was not found. Please try again or type '1' to return to the main menu.")
+        except AttributeError as attr_err:
+            print(f"AttributeError: {attr_err}. It seems there was an issue with your input. Please try again.")
         except Exception as e:
             print(f"An error occurred: {e}. Please try again.")
 
